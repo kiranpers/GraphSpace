@@ -1,0 +1,45 @@
+services:
+  web:
+    ports:
+      - "8000:8000"
+    command: python manage.py runserver 0.0.0.0:8000 --settings=graphspace.settings.docker
+    environment:
+      - POSTGRES_USER=pguser
+      - POSTGRES_PASSWORD=pgpassword
+      - POSTGRES_DB=testdb
+      - POSTGRES_HOST=db
+    image: web:latest
+    depends_on:
+    - migrate
+  migrate:
+    build: .
+    command: python manage.py migrate --settings=graphspace.settings.docker
+    image: web:latest
+    environment:
+      - POSTGRES_USER=pguser
+      - POSTGRES_PASSWORD=pgpassword
+      - POSTGRES_DB=testdb
+      - POSTGRES_HOST=db
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:9.6-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=pguser
+      - POSTGRES_PASSWORD=pgpassword
+      - POSTGRES_DB=testdb
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U pguser -d testdb" ]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    ports:
+      - 5432:5432
+    volumes:
+      - db:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+volumes:
+  db:
+    driver: local

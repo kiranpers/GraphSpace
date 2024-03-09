@@ -15,6 +15,7 @@ Installation Instructions
 ===================================
 * [Running GraphSpace Locally](https://github.com/Murali-group/GraphSpace/wiki/Running-GraphSpace-locally)
 * [Running GraphSpace on Apache](https://github.com/Murali-group/GraphSpace/wiki/Running-GraphSpace-on-Apache)
+* [Running GraphSpace With Docker Locally](./DOCKER_SETUP.md)
 
 Documentation
 =================
